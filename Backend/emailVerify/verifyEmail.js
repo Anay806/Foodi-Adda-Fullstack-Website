@@ -18,7 +18,7 @@ export const verifyEmail = (token, email) => {
     //Subject of Email
     subject: "Email Verification",
     //this would be the text of email body
-    text: `Hii Anay How are you men , What about you? , i will meet you next monday at the Rajmahel hotel, if you want also so please contract me to throw of this LINK http://localhost:5173/verify/${token}Thanks Bro`
+    text: `Hii Anay How are you men , What about you? , i will meet you next monday at the Rajmahel hotel, if you want also so please contract me to throw of this LINK http://localhost:5173/verify/${token} Thanks Bro`
 
   };
   transporter.sendMail(mailConfiguration, function (error, info) {

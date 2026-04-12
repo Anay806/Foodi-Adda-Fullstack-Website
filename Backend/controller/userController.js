@@ -31,7 +31,7 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword
     })
-    const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: '10m' })
+    const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: '24h' })
     verifyEmail(token, email) // send Email here
     newUser.token = token
     await newUser.save()
@@ -55,7 +55,7 @@ export const verify = async (req, res) => {
   try {
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "Authorization token is missing or Invalid"
       })
@@ -110,7 +110,7 @@ export const reVerify = async (req, res) => {
         message: " User Not found"
       })
     }
-    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '10m' })
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '24h' })
     verifyEmail(token, email) // send Email here
     user.token = token
     await user.save()
