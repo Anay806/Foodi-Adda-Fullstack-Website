@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -16,10 +14,6 @@ import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
-
-
-
-
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)

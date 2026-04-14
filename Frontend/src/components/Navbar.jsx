@@ -1,13 +1,18 @@
 import { ShoppingCart } from 'lucide-react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from './ui/button'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUser } from '@/redux/userSlice'
 
 const Navbar = () => {
-  const user = true
+  const { user } = useSelector(store => store.user)
   const accessToken = localStorage.getItem('accessToken')
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
 
   const logOutHandler = async () => {
     try {
@@ -17,6 +22,7 @@ const Navbar = () => {
         }
       })
       if (res.data.success) {
+        dispatch(setUser(null))
         toast.success(res.data.message)
       }
 
@@ -42,7 +48,7 @@ const Navbar = () => {
             <Link to={'/'}><li>Home</li></Link>
             <Link to={'/products'}><li>Products</li></Link>
             {
-              user && <Link to={'/profile'}><li>Hello User</li></Link>
+              user && <Link to={'/profile'}><li>Hello, {user.firstName}</li></Link>
             }
           </ul>
           <Link to={'/cart'} className='relative'>
@@ -50,7 +56,7 @@ const Navbar = () => {
             <span className='bg-orange-500 rounded-full absolute text-white -top-3 -right-5 px-2'>20</span>
           </Link>
           {
-            user ? <Button className="bg-orange-500 text-xl text-white cursor-pointer">Logout</Button> : <Button className="bg-orange-500 text-white text-xl cursor-pointer">Login</Button>
+            user ? <Button onClick={logOutHandler} className="bg-orange-500 text-xl text-white cursor-pointer">Logout</Button> : <Button onClick={() => navigate('/login')} className="bg-orange-500 text-white text-xl cursor-pointer">Login</Button>
           }
 
 
