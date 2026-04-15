@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 
 import {
@@ -15,9 +15,29 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { Button } from '@/components/ui/button'
+import { useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 
 const Profile = () => {
+  const { user } = useSelector(store => store.user)
+  const params = useParams()
+  const userId = params.userId
+  const [updateUser, setUpdateUser] = useState({
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    email: user?.email,
+    phoneNo: user?.phoneNo,
+    city: user?.city,
+    zipCode: user?.zipCode,
+    profilePic: user?.profilePic,
+    role: user?.role,
+  })
+
+
+
+
+
   return (
     <div className='pt-20 min-h-screen bg-gray-100'>
 
