@@ -380,7 +380,7 @@ export const getUserById = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const userIdToUpdate = req.params.user.id;  //  the ID of the user we want to update
+    const userIdToUpdate = req.params.id;  //  the ID of the user we want to update
     const loggedInUser = req.user; // from is Authenticate middleware
     const { firstName, lastName, address, city, zipCode, phoneNo, role } = req.body;
 
@@ -406,7 +406,7 @@ export const updateUser = async (req, res) => {
 
     if (req.file) {
       if (profilePicPublicId) {
-        await cloudinary.uploader.destroy(profilePicPublicPic)
+        await cloudinary.uploader.destroy(profilePicPublicId)
       }
 
       const uploadResult = await new Promise((resolve, reject) => {
@@ -440,7 +440,7 @@ export const updateUser = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Profile updated successFully",
-      user: updateUser
+      user: updatedUser
     })
 
   } catch (error) {
