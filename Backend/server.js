@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config'
 import connectDB from './database/db.js';
 import userRoute from './Routes/userRoutes.js'
+import productRoute from './Routes/productRoutes.js'
 import cors from 'cors'
 
 
@@ -17,6 +18,8 @@ app.use(cors({
   credentials: true
 }))
 app.use('/api/v1/user', userRoute)
+app.use('/api/v1/product', productRoute)
+
 // my api  http://localhost:8000/api/v1/user/register
 
 // Connect to Database first, then start server
