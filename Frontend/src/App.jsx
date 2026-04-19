@@ -9,6 +9,7 @@ import Verify from './pages/Verify';
 import VerifyEmail from './pages/VerifyEmail';
 import Footer from './components/Footer';
 import Profile from './pages/Profile';
+import Product from './pages/Product';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: '/profile/:userId',
     element: <><Navbar /><Profile /><Footer /></>
+  },
+  {
+    path: '/products',
+    element: <><Navbar /><Product /><Footer /></>
   }
 ])
 
