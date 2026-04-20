@@ -14,8 +14,11 @@ import { toast } from 'sonner'
 import axios from 'axios'
 
 
+
 const Product = () => {
   const [allProducts, setAllProducts] = useState([])
+  const [loading, setLoading] = useState(false)
+
   const getAllProducts = async () => {
     try {
       const res = await axios.get(`http://localhost:8000/api/v1/product/getAllproducts`);
@@ -65,7 +68,7 @@ const Product = () => {
 
             {
               allProducts.map((product) => {
-                return <ProductCard key={product._id} product={product} />;
+                return <ProductCard key={product._id} product={product} loading={loading} />;
               })
             }
 
