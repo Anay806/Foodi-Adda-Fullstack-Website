@@ -17,14 +17,14 @@ const ProductCard = ({ product, loading }) => {
           <Skeleton className="w-[200px] h-4" />
           <Skeleton className="w-[100px] h-4" />
           <Skeleton className="w-[150px] h-8" />
-        </div> : null
+        </div> : <div className='px-2 space-y-1'>
+          <h1 className='font-semibold h-12 line-clamp-2'>{productName}</h1>
+          <h2 className='font-bold'>₹{productPrice}</h2>
+          <Button className="bg-orange-600 mb-3 w-full"><ShoppingCart />Add to cart</Button>
+        </div>
       }
 
-      <div className='px-2 space-y-1'>
-        <h1 className='font-semibold h-12 line-clamp-2'>{productName}</h1>
-        <h2 className='font-bold'>₹{productPrice}</h2>
-        <Button className="bg-orange-600 mb-3 w-full"><ShoppingCart />Add to cart</Button>
-      </div>
+
 
     </div>
   )
