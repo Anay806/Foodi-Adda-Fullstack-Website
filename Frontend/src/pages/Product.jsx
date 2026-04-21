@@ -18,6 +18,7 @@ import axios from 'axios'
 const Product = () => {
   const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(false)
+  const [priceRange, setPriceRange] = useState([0, 999])
 
   const getAllProducts = async () => {
     try {
@@ -45,7 +46,7 @@ const Product = () => {
     <div className='pt-20 pb-10'>
       <div className='max-w-7xl mx-auto flex gap-7'>
         {/* sideBar */}
-        <FilterSideBar allProducts={allProducts} />
+        <FilterSideBar allProducts={allProducts} priceRange={priceRange} />
 
         {/* Main product section */}
         <div className='flex flex-col flex-1'>
