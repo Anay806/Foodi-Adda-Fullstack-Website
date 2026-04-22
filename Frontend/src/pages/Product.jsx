@@ -12,27 +12,65 @@ import {
 import ProductCard from '@/components/ProductCard'
 import { toast } from 'sonner'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProducts } from '@/redux/productSlice'
 
 
 
 const Product = () => {
+  const { products } = useSelector(store => store.product)
   const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(false)
+  const [search, setSearch] = useState("")
+  const [category, setCategory] = useState("All")
+  const [brand, setBrand] = useState("All")
+  const [sortOrder, setSortorder] = useState("")
   const [priceRange, setPriceRange] = useState([0, 999])
+  const dispatch = useDispatch()
 
   const getAllProducts = async () => {
     try {
       const res = await axios.get(`http://localhost:8000/api/v1/product/getAllproducts`);
       if (res.data.success) {
         setAllProducts(res.data.products)
+        dispatch(setProducts(res.data.products))
       }
 
     } catch (error) {
       console.log(error);
       toast.error("Failed to fetch products. please try again later.")
 
+    } finally {
+      setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (allProducts.length === 0) return
+
+    let filtered = [...allProducts]
+
+    if (search.trim() !== "") {
+      filtered = filtered.filter(p => p.productName?.toLowerCase().includes(search.toLowerCase()))
+    }
+
+    if (category !== "All") {
+      filtered = filtered.filter(p => p.category === category)
+    }
+
+    if (brand !== "All") {
+      filtered = filtered.filter(p => p.brand === brand)
+    }
+
+    filtered = filtered.filter(p => p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1])
+
+    if (sortOrder === "lowToHigh") {
+      filtered.sort((a, b) => a.productPrice - b.productPrice)
+    } else if (sortOrder === "highToLow") {
+      filtered.sort((a, b) => b.productPrice - a.productPrice)
+    }
+
+  }, [search, category, brand, priceRange, sortOrder, priceRange, allProducts, dispatch])
 
   useEffect(() => {
     getAllProducts();
@@ -46,7 +84,18 @@ const Product = () => {
     <div className='pt-20 pb-10'>
       <div className='max-w-7xl mx-auto flex gap-7'>
         {/* sideBar */}
-        <FilterSideBar allProducts={allProducts} priceRange={priceRange} />
+        <FilterSideBar
+          allProducts={allProducts}
+          priceRange={priceRange}
+          search={search}
+          setSearch={setSearch}
+          brand={brand}
+          setBrand={setBrand}
+          category={category}
+          setCategory={setCategory}
+          setPriceRange={setPriceRange}
+
+        />
 
         {/* Main product section */}
         <div className='flex flex-col flex-1'>
@@ -68,7 +117,7 @@ const Product = () => {
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7'>
 
             {
-              allProducts.map((product) => {
+              products.map((product) => {
                 return <ProductCard key={product._id} product={product} loading={loading} />;
               })
             }
