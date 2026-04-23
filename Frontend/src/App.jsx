@@ -10,6 +10,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import Footer from './components/Footer';
 import Profile from './pages/Profile';
 import Product from './pages/Product';
+import Cart from './pages/Cart';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: '/products',
     element: <><Navbar /><Product /><Footer /></>
+  },
+  {
+    path: '/cart',
+    element: <><Navbar /><Cart /></>
   }
 ])
 

@@ -70,6 +70,8 @@ const Product = () => {
       filtered.sort((a, b) => b.productPrice - a.productPrice)
     }
 
+    dispatch(setProducts(filtered))
+
   }, [search, category, brand, priceRange, sortOrder, priceRange, allProducts, dispatch])
 
   useEffect(() => {
@@ -100,7 +102,7 @@ const Product = () => {
         {/* Main product section */}
         <div className='flex flex-col flex-1'>
           <div className='flex justify-end mb-4'>
-            <Select>
+            <Select onValueChange={(value) => setSortorder(value)}>
               <SelectTrigger className="w-full max-w-48">
                 <SelectValue placeholder="Sort by Price" />
               </SelectTrigger>
