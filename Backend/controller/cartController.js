@@ -94,3 +94,15 @@ export const addToCart = async () => {
   }
 
 }
+
+export const removeFromCart = async () => {
+  try {
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+
+  }
+}
