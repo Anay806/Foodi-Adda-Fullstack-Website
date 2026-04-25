@@ -12,6 +12,7 @@ const Navbar = () => {
   const accessToken = localStorage.getItem('accessToken')
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const { cart } = useSelector(store => store.product)
 
 
   const logOutHandler = async () => {
@@ -53,7 +54,7 @@ const Navbar = () => {
           </ul>
           <Link to={'/cart'} className='relative'>
             <ShoppingCart />
-            <span className='bg-orange-500 rounded-full absolute text-white -top-3 -right-5 px-2'>20</span>
+            <span className='bg-orange-500 rounded-full absolute text-white -top-3 -right-5 px-2'>{cart.items.length}</span>
           </Link>
           {
             user ? <Button onClick={logOutHandler} className="bg-orange-500 text-xl text-white cursor-pointer">Logout</Button> : <Button onClick={() => navigate('/login')} className="bg-orange-500 text-white text-xl cursor-pointer">Login</Button>

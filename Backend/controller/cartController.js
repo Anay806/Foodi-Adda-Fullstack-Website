@@ -1,11 +1,14 @@
 
-export const getCart = async () => {
+import { Cart } from "../models/cartModel.js";
+import { Product } from "../models/productModel.js";
+
+export const getCart = async (req, res) => {
   try {
     const userId = req.id;
 
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) {
-      return res.status({ success: true, message: "Cart is Empty", cart: [] })
+      return res.status(200).json({ success: true, message: "Cart is Empty", cart: [] })
 
     }
     res.status(200).json({
@@ -22,7 +25,7 @@ export const getCart = async () => {
   }
 }
 
-export const addToCart = async () => {
+export const addToCart = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
@@ -45,7 +48,7 @@ export const addToCart = async () => {
     if (!cart) {
       cart = new Cart({
         userId,
-        items: [{ productId, questity: 1, price: product.price }],
+        items: [{ productId, quantity: 1, price: product.productPrice }],
         totalPrice: product.productPrice
       })
     }
@@ -53,20 +56,20 @@ export const addToCart = async () => {
       //Find if  product exist in the cart
       const itemIndex = cart.items.findIndex((item) => item.productId.toString() === productId)
       if (itemIndex > -1) {
-        //if product exist in the cart update the quentity and price
-        cart.items[itemIndex].quentity += 1;
+        //if product exist in the cart update the quantity and price
+        cart.items[itemIndex].quantity += 1;
       } else {
         //if product new -> add to the cart
         cart.items.push({
           productId,
-          quentity: 1,
+          quantity: 1,
           price: product.productPrice,
         })
       }
 
       //update the total price
       cart.totalPrice = cart.items.reduce(
-        (acc, item) => acc + item.price * item.quentity
+        (acc, item) => acc + item.price * item.quantity, 0
       )
     }
 
@@ -74,7 +77,7 @@ export const addToCart = async () => {
     await cart.save();
 
     //populate the cart details before sending responce
-    const polulatedCart = await Cart.findById(cart._id).populate(items.productId);
+    const populatedCart = await Cart.findById(cart._id).populate("items.productId");
 
     res.status(200).json({
       success: true,
@@ -95,7 +98,7 @@ export const addToCart = async () => {
 
 }
 
-export const updateQuantity = async () => {
+export const updateQuantity = async (req, res) => {
   try {
     const userId = req.id;
     const { productId, type } = req.body;
@@ -131,7 +134,7 @@ export const updateQuantity = async () => {
   }
 }
 
-export const removeFromCart = async () => {
+export const removeFromCart = async (req, res) => {
   try {
     const userId = req.id;
     const { productId } = req.body;
