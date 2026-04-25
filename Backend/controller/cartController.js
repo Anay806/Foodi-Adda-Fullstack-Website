@@ -95,9 +95,61 @@ export const addToCart = async () => {
 
 }
 
+export const updateQuantity = async () => {
+  try {
+    const userId = req.id;
+    const { productId, type } = req.body;
+
+    let cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).json({
+      success: false,
+      message: "Cart not found"
+    })
+
+    const item = cart.items.find(item => item.productId.toString() === productId);
+    if (!item) return res.status(404).json({
+      success: false,
+      message: "item not Found in the cart"
+    })
+    if (type === "increase") item.quantity += 1;
+    if (type === "decrease" && item.quantity) item.quantity -= 1
+
+    cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+
+    await cart.save();
+    cart = await cart.populate("items.productId");
+
+    res.status(200).json({ success: true, cart })
+
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    })
+
+  }
+}
+
 export const removeFromCart = async () => {
   try {
+    const userId = req.id;
+    const { productId } = req.body;
 
+    let cart = await Cart.findOne({ userId });
+    if (!cart) return res.status(404).json({
+      success: false,
+      message: "Cart not found"
+    })
+    cart.items = cart.items.filter(item => item.productId.toString() !== productId);
+    cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    await cart.save();
+    res.status(200).json({
+      success: true,
+      message: "Product removed from cart successfully",
+      cart
+    })
   } catch (error) {
     return res.status(500).json({
       success: false,
