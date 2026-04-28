@@ -77,7 +77,7 @@ export const addToCart = async (req, res) => {
     await cart.save();
 
     //populate the cart details before sending responce
-    const populatedCart = await Cart.findById(cart._id).populate("items.productId");
+    const populatedCart = await cart.populate("items.productId");
 
     res.status(200).json({
       success: true,
@@ -103,7 +103,7 @@ export const updateQuantity = async (req, res) => {
     const userId = req.id;
     const { productId, type } = req.body;
 
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) return res.status(404).json({
       success: false,
       message: "Cart not found"
@@ -120,7 +120,6 @@ export const updateQuantity = async (req, res) => {
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0)
 
     await cart.save();
-    cart = await cart.populate("items.productId");
 
     res.status(200).json({ success: true, cart })
 
@@ -139,7 +138,7 @@ export const removeFromCart = async (req, res) => {
     const userId = req.id;
     const { productId } = req.body;
 
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart) return res.status(404).json({
       success: false,
       message: "Cart not found"
