@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import logo from "../assets/logo.jpeg"
 import { Button } from '@/components/ui/button';
@@ -25,12 +25,31 @@ const Cart = () => {
   const API = "http://localhost:8000/api/v1/cart"
   const accessToken = localStorage.getItem("accessToken")
 
+  const loadCart = async () => {
+    try {
+      const res = await axios.get(API, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+      if (res.data.success) {
+        dispatch(setCart(res.data.cart))
+      }
+
+    } catch (error) {
+      console.log(error);
+
+
+    }
+  }
+
   const handleUpdateQuantity = async (productId, type) => {
     try {
       const res = await axios.put(`${API}/update`, { productId, type }, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         },
+
 
       })
       if (res.data.success) {
@@ -63,6 +82,10 @@ const Cart = () => {
     }
   }
 
+  useEffect(() => {
+    loadCart()
+  }, dispatch)
+
   return (
     <div className='pt-20 bg-gray-50 min-h-screen'>
       {
@@ -85,9 +108,9 @@ const Cart = () => {
 
                         </div>
                         <div className='flex gap-5 items-center'>
-                          <Button onClick={() => handleUpdateQuantity(product?.productId?._id, 'decrease')} variant='outline'>-</Button>
+                          <Button onClick={() => handleUpdateQuantity(product.productId._id, 'decrease')} variant='outline'>-</Button>
                           <span>{product.quantity}</span>
-                          <Button onClick={() => handleUpdateQuantity(product?.productId?._id, 'increase')} variant='outline'>+</Button>
+                          <Button onClick={() => handleUpdateQuantity(product.productId._id, 'increase')} variant='outline'>+</Button>
                         </div>
                         <p>{(product?.productId?.productPrice) * (product?.quantity)}</p>
                         <p onClick={() => handleRemove(product?.productId?._id)} className='flex text-red-500 items-center gap-1 cursor-pointer'><Trash2 className='w-4 h-4' />Remove</p>

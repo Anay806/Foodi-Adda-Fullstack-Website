@@ -103,7 +103,8 @@ export const updateQuantity = async (req, res) => {
     const userId = req.id;
     const { productId, type } = req.body;
 
-    let cart = await Cart.findOne({ userId }).populate("items.productId");
+    let cart = await Cart.findOne({ userId })
+    // .populate("items.productId");
     if (!cart) return res.status(404).json({
       success: false,
       message: "Cart not found"
@@ -115,11 +116,12 @@ export const updateQuantity = async (req, res) => {
       message: "item not Found in the cart"
     })
     if (type === "increase") item.quantity += 1;
-    if (type === "decrease" && item.quantity) item.quantity -= 1
+    if (type === "decrease" && item.quantity > 1) item.quantity -= 1
 
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0)
 
     await cart.save();
+    cart = await cart.populate("items.productId")
 
     res.status(200).json({ success: true, cart })
 
@@ -143,10 +145,14 @@ export const removeFromCart = async (req, res) => {
       success: false,
       message: "Cart not found"
     })
-    cart.items = cart.items.filter(item => item.productId.toString() !== productId);
+    cart.items = cart.items.filter(item => item.productId._id.toString() !== productId);
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     await cart.save();
+
+    // Re-fetch to ensure correct populated response
+    cart = await Cart.findOne({ userId }).populate("items.productId");
+
     res.status(200).json({
       success: true,
       message: "Product removed from cart successfully",

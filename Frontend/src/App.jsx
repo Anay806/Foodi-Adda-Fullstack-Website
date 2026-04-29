@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import Profile from './pages/Profile';
 import Product from './pages/Product';
 import Cart from './pages/Cart';
+import Dashboard from './pages/Dashboard';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,16 @@ const router = createBrowserRouter([
   {
     path: '/cart',
     element: <><Navbar /><Cart /></>
+  },
+  {
+    path: '/dashboard',
+    element: <Dashboard />,
+    children: [
+      {
+        path: "sales",
+        element:
+      }
+    ]
   }
 ])
 
