@@ -12,6 +12,14 @@ import Profile from './pages/Profile';
 import Product from './pages/Product';
 import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
+import AdminSales from './pages/admin/AdminSales';
+import AdminProduct from './pages/admin/AdminProduct';
+import AddProduct from './pages/admin/AddProduct';
+import AdminOrders from './pages/admin/AdminOrders';
+import ShowUserOrders from './pages/admin/ShowUserOrders';
+import AdminUsers from './pages/admin/AdminUsers';
+import UserInfo from './pages/admin/UserInfo';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -36,7 +44,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile/:userId',
-    element: <><Navbar /><Profile /><Footer /></>
+    element: <ProtectedRoute><Navbar /><Profile /><Footer /></ProtectedRoute>
   },
   {
     path: '/products',
@@ -44,16 +52,40 @@ const router = createBrowserRouter([
   },
   {
     path: '/cart',
-    element: <><Navbar /><Cart /></>
+    element: <ProtectedRoute><Navbar /><Cart /></ProtectedRoute>
   },
   {
     path: '/dashboard',
-    element: <Dashboard />,
+    element: <ProtectedRoute adminOnly={true}><Dashboard /></ProtectedRoute>,
     children: [
       {
         path: "sales",
-        element:
-      }
+        element: <AdminSales />
+      },
+      {
+        path: "add-product",
+        element: <AddProduct />
+      },
+      {
+        path: "products",
+        element: <AdminProduct />
+      },
+      {
+        path: "orders",
+        element: <AdminOrders />
+      },
+      {
+        path: "users/orders/:userId",
+        element: <ShowUserOrders />
+      },
+      {
+        path: "users",
+        element: <AdminUsers />
+      },
+      {
+        path: "users/:id",
+        element: <UserInfo />
+      },
     ]
   }
 ])
@@ -70,3 +102,4 @@ const App = () => {
 }
 
 export default App;
+
