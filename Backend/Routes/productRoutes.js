@@ -1,5 +1,5 @@
 import express from 'express'
-import { addProduct, deleteProducts, getAllProduct, updateProduct } from '../controller/productController.js';
+import { addProduct, deleteProducts, getAllProduct, getProduct, updateProduct } from '../controller/productController.js';
 import { isAdmin, isAuthenticated } from '../middleware/isAuthenticated.js';
 import { multipleUpload } from '../middleware/multer.js';
 
@@ -9,6 +9,7 @@ const router = express.Router()
 
 router.post('/add', isAuthenticated, isAdmin, multipleUpload, addProduct)
 router.get('/getallproducts', getAllProduct)
+router.get('/get/:productId', getProduct)
 router.delete('/delete/:productId', isAuthenticated, isAdmin, deleteProducts)
 router.put('/update/:productId', isAuthenticated, isAdmin, multipleUpload, updateProduct)
 

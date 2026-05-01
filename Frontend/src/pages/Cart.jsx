@@ -19,7 +19,7 @@ const Cart = () => {
 
   const subtotal = cart?.totalPrice
   const shipping = subtotal > 299 ? 0 : 10;
-  const tax = subtotal * 0.05 // 5%
+  const tax = Math.floor(subtotal * 0.05) // 5%
   const total = subtotal + shipping + tax
 
   const API = "http://localhost:8000/api/v1/cart"

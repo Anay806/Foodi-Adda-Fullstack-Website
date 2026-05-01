@@ -44,7 +44,7 @@ const ProductCard = ({ product, loading }) => {
     <div className='shadow-lg rounded-lg overflow-hidden h-max'>
       <div className='w-full h-full aspect-square overflow-hidden'>
         {
-          loading ? <Skeleton className="w-full h-full rounded-lg" /> : <img src={productImg[0]?.url} alt="" className='w-full h-full transition-trnsform duration-300 hover:scale-105  cursor-pointer' />
+          loading ? <Skeleton className="w-full h-full rounded-lg" /> : <img onClick={() => navigate(`/products/${product._id}`)} src={productImg[0]?.url} alt="" className='w-full h-full transition-trnsform duration-300 hover:scale-105  cursor-pointer' />
         }
       </div>
       {

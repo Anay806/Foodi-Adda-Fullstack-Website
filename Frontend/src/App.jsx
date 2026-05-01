@@ -20,6 +20,7 @@ import ShowUserOrders from './pages/admin/ShowUserOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import UserInfo from './pages/admin/UserInfo';
 import ProtectedRoute from './components/ProtectedRoute';
+import SingleProduct from './pages/SingleProduct';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,11 @@ const router = createBrowserRouter([
   {
     path: '/verify/:token',
     element: <><VerifyEmail /></>
+  },
+  {
+    path: '/products/:id',
+    element: <><Navbar /><SingleProduct /></>
+
   },
   {
     path: '/profile/:userId',
