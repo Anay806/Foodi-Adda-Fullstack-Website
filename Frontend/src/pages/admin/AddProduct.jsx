@@ -1,10 +1,71 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import ImageUpload from '@/components/ImageUpload'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import React from 'react'
+import { setProducts } from '@/redux/productSlice'
+import axios from 'axios'
+import { Loader2 } from 'lucide-react'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { toast } from 'sonner'
 
 const AddProduct = () => {
+  const accessToken = localStorage.getItem("accessToken")
+  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
+  const [productData, setProductData] = useState({
+    productName: "",
+    productPrice: "",
+    productDesc: "",
+    productImg: [],
+    brand: "",
+    category: ""
+  })
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const submitHandler = async () => {
+    e.preventDefault()
+    const formData = new FormData();
+    formData.append("productName", productData.productName);
+    formData.append("productPrice", productData.productPrice);
+    formData.append("productDesc", productData.productDesc);
+    formData.append("category", productData.category);
+    formData.append("brand", productData.brand);
+
+    if (productData.productImg.length === 0) {
+      formData.append("files", img)
+    }
+
+
+    try {
+      setLoading(true)
+      const res = await axios.post(`http://localhost:8000/api/v1/product/add`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+
+      })
+      if (res.data.success) {
+        dispatch(setProducts([...Products, res.data.product]))
+        toast.success(res.data.message)
+      }
+
+    } catch (error) {
+      console.log(error);
+
+
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <div className='pl-[350px] py-10 pr-20 mx-auto px-4 bg-gray-100'>
       <Card className='w-full my-20'>
@@ -16,33 +77,42 @@ const AddProduct = () => {
           <div className='flex flex-col gap-2'>
             <div className='grid gap-2'>
               <Label>Product Name</Label>
-              <Input type='text' name='productName' placeholder='Pizza' required></Input>
+              <Input type='text' value={productData.productName} onChange={handleChange} name='productName' placeholder='Pizza' required></Input>
 
             </div>
             <div className='grid gap-2'>
               <Label>Price</Label>
-              <Input type='text' name='productPrice' placeholder='Burger' required></Input>
+              <Input type='text' value={productData.productPrice}
+                onChange={handleChange} name='productPrice' placeholder='Burger' required></Input>
 
             </div>
             <div className='grid grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label>Brand</Label>
-                <Input type='text' name='brand' placeholder='Brand' required></Input>
+                <Input type='text' value={productData.brand} onChange={handleChange} name='brand' placeholder='Brand' required></Input>
               </div>
               <div className='grid gap-2'>
                 <Label>Category</Label>
-                <Input type='text' name='category' placeholder='category' required></Input>
+                <Input type='text' value={productData.category} onChange={handleChange} name='category' placeholder='category' required></Input>
               </div>
             </div>
 
-            <div className='grid-cols-2'>
+            <div className='grid-gap-2'>
               <div className='flex items-center'>
                 <Label>Description</Label>
               </div>
-              <Textarea name='productDisc' placeholder="Enter brief description of your product"></Textarea>
+              <Textarea value={productData.productDesc} onChange={handleChange} name='productDisc' placeholder="Enter brief description of your product"></Textarea>
             </div>
-
+            <ImageUpload productData={productData} setProductData={setProductData} />
           </div>
+          <CardFooter className="flex-col gap-2">
+            <Button disabled={loading} onClick={submitHandler} className="w-full bg-orange-600 cursor-pointer" type="submit">
+              {
+                loading ? <span className='flex gap-1 items-center'><Loader2 className='animate-spin' />Please wait</span> : "Add-Product"
+              }
+            </Button>
+
+          </CardFooter>
         </CardContent>
       </Card>
     </div>
