@@ -8,12 +8,13 @@ import { setProducts } from '@/redux/productSlice'
 import axios from 'axios'
 import { Loader2 } from 'lucide-react'
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'sonner'
 
 const AddProduct = () => {
   const accessToken = localStorage.getItem("accessToken")
   const dispatch = useDispatch()
+  const { products } = useSelector(store => store.product)
   const [loading, setLoading] = useState(false)
   const [productData, setProductData] = useState({
     productName: "",
@@ -31,7 +32,7 @@ const AddProduct = () => {
     }))
   }
 
-  const submitHandler = async () => {
+  const submitHandler = async (e) => {
     e.preventDefault()
     const formData = new FormData();
     formData.append("productName", productData.productName);
@@ -59,7 +60,7 @@ const AddProduct = () => {
 
       })
       if (res.data.success) {
-        dispatch(setProducts([...Products, res.data.product]))
+        dispatch(setProducts([...products, res.data.product]))
         toast.success(res.data.message)
       }
 
@@ -106,12 +107,12 @@ const AddProduct = () => {
               <div className='flex items-center'>
                 <Label>Description</Label>
               </div>
-              <Textarea value={productData.productDesc} onChange={handleChange} name='productDisc' placeholder="Enter brief description of your product"></Textarea>
+              <Textarea value={productData.productDesc} onChange={handleChange} name='productDesc' placeholder="Enter brief description of your product"></Textarea>
             </div>
             <ImageUpload productData={productData} setProductData={setProductData} />
           </div>
           <CardFooter className="flex-col gap-2">
-            <Button disabled={loading} onClick={submitHandler} className="w-full bg-orange-600 cursor-pointer" type="submit">
+            <Button disabled={loading} onClick={submitHandler} className="w-full mt-5 bg-orange-600 cursor-pointer" type="submit">
               {
                 loading ? <span className='flex gap-1 items-center'><Loader2 className='animate-spin' />Please wait</span> : "Add-Product"
               }

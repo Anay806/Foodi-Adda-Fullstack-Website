@@ -1,14 +1,31 @@
-import { Label } from 'radix-ui';
+import { Label } from './ui/label';
 import React from 'react'
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import { CardContent } from './ui/card';
+import { Card, CardContent } from './ui/card';
+import { X } from 'lucide-react';
 
 const ImageUpload = ({ productData, setProductData }) => {
+  const handleFiles = (e) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length) {
+      setProductData((prev) => ({
+        ...prev,
+        productImg: [...prev.productImg, ...files]
+      }))
+    }
+  }
+
+  const removeImage = (index) => {
+    setProductData((prev) => {
+      const updateImages = prev.productImg.filter((_, i) => i !== index);
+      return { ...prev, productImg: updateImages }
+    })
+  }
   return <div className='grid gap-2'>
     <Label>Product Image</Label>
-    <Input type='file' id='file-upload' className="hidden" accept="image/*" multiple></Input>
-    <Button varient='outline'>
+    <Input type='file' id='file-upload' className="hidden" accept="image/*" multiple onChange={handleFiles}></Input>
+    <Button variant='outline'>
       <label htmlFor="file-upload" className='cursor-pointer'>Upload-Images</label>
     </Button>
 
@@ -30,12 +47,14 @@ const ImageUpload = ({ productData, setProductData }) => {
                 return null
               }
               return (
-                <Card>
+                <Card key={idx}>
                   <CardContent>
-                    <img src={preview} alt="" width={200} height={200} className='w-full h-32 object-cover rounded-md' />
+                    <img src={preview} alt="" width={100} height={100} className='w-full h-32 object-cover rounded-md' />
 
                     {/* remove-button */}
-                    <button className='absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition'><X size={14} /></button>
+                    <button onClick={() => removeImage(idx)} className='absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition'>
+                      <X size={14} />
+                    </button>
                   </CardContent>
                 </Card>
               )

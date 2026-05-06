@@ -23,8 +23,11 @@ const ProductDesc = ({ product }) => {
 
     } catch (error) {
       console.log(error);
-
-
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message)
+      } else {
+        toast.error('Failed to add product to cart')
+      }
     }
   }
   return (
