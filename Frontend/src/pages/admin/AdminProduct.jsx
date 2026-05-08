@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Edit, Search, Trash2 } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 
@@ -18,12 +18,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { Textarea } from '@/components/ui/textarea'
+import ImageUpload from '@/components/ImageUpload'
 
 
 
 
 const AdminProduct = () => {
   const { products } = useSelector(store => store.product)
+  const [editProduct, setEditProduct] = useState(null)
   return (
     <div className='pl-[350px] py-20 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100'>
       <div className='flex justify-between'>
@@ -61,7 +64,7 @@ const AdminProduct = () => {
                     <DialogTrigger asChild>
                       <Edit className='text-green-500 cursor-pointer' />
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm">
+                    <DialogContent className="sm:max-w-[625px] max-h-[740px] overflow-y-scroll">
                       <DialogHeader>
                         <DialogTitle>Edit profile</DialogTitle>
                         <DialogDescription>
@@ -69,15 +72,38 @@ const AdminProduct = () => {
                           done.
                         </DialogDescription>
                       </DialogHeader>
-                      <div className='space-y-4'>
-                        <div>
-                          <Label htmlFor="name-1">Name</Label>
-                          <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+                      <div className='space-y-4 flex flex-col gap-2'>
+                        <div className='grid gap-2'>
+                          <Label>Product Name</Label>
+                          <Input type='text' name="productName" placeholder="Pizza..." required />
                         </div>
                         <div>
-                          <Label htmlFor="username-1">Username</Label>
-                          <Input id="username-1" name="username" defaultValue="@peduarte" />
+                          <Label>Price</Label>
+                          <Input type='number' placeholder="Price.." name='productPrice' required />
                         </div>
+                        <div className='grid grid-cols-2 gap-4'>
+                          <div className='grid gap-2'>
+                            <Label>Brand</Label>
+                            <Input type='text' name='brand' placeholder='Burger' required></Input>
+
+                          </div>
+                          <div className='grid gap-2'>
+                            <Label>Category</Label>
+                            <Input type='text' name='category' placeholder='Pure-Veg...' required></Input>
+
+                          </div>
+
+                        </div>
+                        <div className='grid- gap-2'>
+                          <div className='flex items-center'>
+                            <Label>Description</Label>
+
+
+                          </div>
+                          <Textarea name='productDesc' placeholder='Enter brief description of product' />
+                        </div>
+                        <ImageUpload />
+
                       </div>
                       <DialogFooter>
                         <DialogClose asChild>

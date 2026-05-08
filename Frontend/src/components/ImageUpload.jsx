@@ -11,14 +11,14 @@ const ImageUpload = ({ productData, setProductData }) => {
     if (files.length) {
       setProductData((prev) => ({
         ...prev,
-        productImg: [...prev.productImg, ...files]
+        productImg: [...(prev?.productImg || []), ...files]
       }))
     }
   }
 
   const removeImage = (index) => {
     setProductData((prev) => {
-      const updateImages = prev.productImg.filter((_, i) => i !== index);
+      const updateImages = (prev?.productImg || []).filter((_, i) => i !== index);
       return { ...prev, productImg: updateImages }
     })
   }
@@ -31,7 +31,7 @@ const ImageUpload = ({ productData, setProductData }) => {
 
     {/* image-preview */}
     {
-      productData.productImg.length > 0 && (
+      productData?.productImg && productData.productImg.length > 0 && (
         <div className='grid grid-cols-2 gap-2 sm:grid-cols-3'>
           {
             productData.productImg.map((file, idx) => {
