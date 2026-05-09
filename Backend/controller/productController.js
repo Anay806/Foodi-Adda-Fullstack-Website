@@ -183,25 +183,25 @@ export const updateProduct = async (req, res) => {
         })
 
       }
-
-      //update product details
-
-      product.productName = productName || product.productName;
-      product.productDesc = productDesc || product.productDesc;
-      product.productPrice = productPrice || product.productPrice;
-      product.category = category || product.category;
-      product.brand = brand || product.brand;
-      product.productImg = updatedImages;
-
-      await product.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Product updated successfully",
-        product
-      })
     }
-  } catch (error) {
+
+    //update product details
+    product.productName = productName || product.productName;
+    product.productDesc = productDesc || product.productDesc;
+    product.productPrice = productPrice || product.productPrice;
+    product.category = category || product.category;
+    product.brand = brand || product.brand;
+    product.productImg = updatedImages;
+
+    await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product
+    })
+  }
+  catch (error) {
     return res.status(500).json({
       success: false,
       message: error.message
