@@ -24,6 +24,18 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { setProducts } from '@/redux/productSlice'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 
 
@@ -32,6 +44,8 @@ const AdminProduct = () => {
   const [editProduct, setEditProduct] = useState(null)
   const accessToken = localStorage.getItem("accessToken")
   const [open, setOpen] = useState(false)
+  const [sortOrder, setShortOrder] = useState('')
+  const [searchTerm, setSearchTerm] = useState("")
   const dispatch = useDispatch()
 
   const handleChange = (e) => {
@@ -90,15 +104,49 @@ const AdminProduct = () => {
 
 
   }
+
+  const deleteProductHandler = async (productId) => {
+    try {
+      const remainingProducts = products.filter((product) => product._id !== productId)
+      const res = await axios.delete(`http://localhost:8000/api/v1/product/delete/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+      if (res.data.success) {
+        toast.success(res.data.message)
+        dispatch(setProducts(remainingProducts))
+      }
+
+    } catch (error) {
+      console.log(error);
+
+
+    }
+  }
+
+  let filteredProduct = products.filter((product) =>
+    product.productName.toLowerCase().includes(searchTerm.toLowerCase()) || product.brand.toLowerCase().includes(searchTerm.toLowerCase()) || product.category.toLowerCase().includes(searchTerm.toLowerCase()))
+
+  if (sortOrder === 'lowToHigh') {
+    filteredProduct = [...filteredProduct].sort((a, b) => a.productPrice - b.productPrice)
+  }
+
+  if (sortOrder === 'highToLow') {
+    filteredProduct = [...filteredProduct].sort((a, b) => b.productPrice - a.productPrice)
+  }
+
+
+
   return (
     <div className='pl-[350px] py-20 pr-20 flex flex-col gap-3 min-h-screen bg-gray-100'>
       <div className='flex justify-between'>
         <div className='relative bg-white rounded-lg'>
-          <Input type='text' placeholder="Search product..." className='w-[400px] items-center'></Input>
+          <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} type='text' placeholder="Search product..." className='w-[400px] items-center'></Input>
           <Search className='absolute right-3 top-1.5 text-gray-500' />
 
         </div>
-        <Select>
+        <Select onValueChange={(value) => setShortOrder(value)} >
           <SelectTrigger className='w-[200px] bg-white'>
             <SelectValue placeholder='Sort by Price'>
 
@@ -112,7 +160,7 @@ const AdminProduct = () => {
 
       </div>
       {
-        products.map((product, index) => {
+        filteredProduct.map((product, index) => {
           return <Card key={index} className='px-4'>
             <div className='flex items-center justify-between'>
               <div className='flex gap-2 items-center'>
@@ -122,7 +170,7 @@ const AdminProduct = () => {
               </div>
               <h1 className='font-semibold text-gray-800'>₹{product.productPrice}</h1>
               <div className='flex gap-3'>
-                <Dialog open={open} onOpenChange={setOpen} >
+                <Dialog open={open} onOpenChange={(value) => { if (!value) { document.activeElement?.blur() } setOpen(value) }} >
 
                   <DialogTrigger asChild>
                     <Edit onClick={() => { setOpen(true), setEditProduct(product) }} className='text-green-500 cursor-pointer' />
@@ -196,7 +244,26 @@ const AdminProduct = () => {
 
                 </Dialog>
 
-                <Trash2 className='text-red-500 cursor-pointer' />
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline"> <Trash2 className='text-red-500 cursor-pointer' /></Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your account
+                        from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteProductHandler(product._id)}>Continue</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+
               </div>
 
             </div>
