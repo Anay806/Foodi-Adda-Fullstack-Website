@@ -24,14 +24,14 @@ const productSlice = createSlice({
     //address managment
     addAddress: (state, action) => {
       if (!state.addresses) state.addresses = []
-      state.addresses = push(action.payload)
+      state.addresses.push(action.payload)
     },
 
     setSelectedAddress: (state, action) => {
       state.selectedAddress = action.payload
     },
     deletedAddress: (state, action) => {
-      state.addresses = state.addresses.filter{ (_, index) => index !== action.payload }
+      state.addresses = state.addresses.filter((_, index) => index !== action.payload)
 
       if (state.selectedAddress === action.payload) {
         state.selectedAddress = null
