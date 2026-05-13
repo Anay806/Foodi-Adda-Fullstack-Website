@@ -4,6 +4,7 @@ import connectDB from './database/db.js';
 import userRoute from './Routes/userRoutes.js'
 import productRoute from './Routes/productRoutes.js'
 import cartRoute from './Routes/cartRoutes.js'
+import orderRoutes from "./Routes/orderRoutes.js"
 import cors from 'cors'
 
 
@@ -21,6 +22,7 @@ app.use(cors({
 app.use('/api/v1/user', userRoute)
 app.use('/api/v1/product', productRoute)
 app.use('/api/v1/cart', cartRoute)
+app.use('/api/v1/orders', orderRoutes)
 
 // my api  http://localhost:8000/api/v1/user/register
 
