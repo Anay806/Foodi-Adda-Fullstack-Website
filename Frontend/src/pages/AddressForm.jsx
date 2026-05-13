@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { addAddress, deletedAddress, setSelectedAddress } from '@/redux/productSlice'
+import axios from 'axios'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -21,6 +22,7 @@ const AddressForm = () => {
   const { cart, addresses, selectedAddress } = useSelector((store) => store.product)
   const [showForm, setShowForm] = useState(addresses?.length > 0 ? false : true)
   const dispatch = useDispatch()
+  const accessToken = localStorage.getItem("accessToken")
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -35,6 +37,26 @@ const AddressForm = () => {
   const shiping = subTotal > 50 ? 0 : 10
   const tax = parseFloat((subTotal * 0.05).toFixed(2))
   const total = subTotal + shiping + tax
+
+  const handlePayment = async () => {
+    try {
+      const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/create-order`, {
+        products: cart?.items?.map(item => ({
+          productId: item.productId._id,
+          Quantity: item.quantity
+        })),
+        tax,
+        shiping,
+        amount,
+        currency: "INR"
+      }, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
+
+    } catch (error) {
+
+    }
+  }
 
 
   return (
