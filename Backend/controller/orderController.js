@@ -1,6 +1,7 @@
 import razorpayInstance from "../config/razorpay.js"
 import crypto from 'crypto'
 import { Cart } from '../models/cartModel.js'
+import { Order } from '../models/orderModel.js'
 
 export const createOrder = async (req, res) => {
   try {
@@ -14,20 +15,21 @@ export const createOrder = async (req, res) => {
     const razorpayOrder = await razorpayInstance.orders.create(options)
 
     //save order in DB
-    const newOrder = new orders({
+    const newOrder = new Order({
       user: req.user._id,
+      products,
       amount,
       tax,
       shiping,
       currency,
       status: "Pending",
-      rozorpayOrderId: razorpayOrder.id
+      razorpayOrderId: razorpayOrder.id
     })
 
     await newOrder.save()
 
     res.json({
-      successs: true,
+      success: true,
       order: razorpayOrder,
       dbOrder: newOrder
     })

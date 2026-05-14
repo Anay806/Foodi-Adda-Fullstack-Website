@@ -3,12 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { addAddress, deletedAddress, setSelectedAddress } from '@/redux/productSlice'
+import { addAddress, deletedAddress, setCart, setSelectedAddress } from '@/redux/productSlice'
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const AddressForm = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -38,22 +41,96 @@ const AddressForm = () => {
   const tax = parseFloat((subTotal * 0.05).toFixed(2))
   const total = subTotal + shiping + tax
 
+  //
+
   const handlePayment = async () => {
     try {
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/create-order`, {
         products: cart?.items?.map(item => ({
           productId: item.productId._id,
-          Quantity: item.quantity
+          quantity: item.quantity
         })),
         tax,
         shiping,
-        amount,
+        amount: total,
         currency: "INR"
       }, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
 
+      if (!data.success) return toast.error("Something went wrong")
+
+      console.log("Razorpay data", data)
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        order_id: data.order.id, // order Id from backend
+        name: "Foodizs",
+        description: "Order Payment",
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`,
+              response, {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            }
+            )
+
+            if (verifyRes.data.success) {
+              toast.success("✅ Payment successfull")
+              dispatch(setCart({ items: [], totalPrice: 0 }))
+              navigate("/order-success")
+            } else {
+              toast.error("❌ Payment verification failed")
+            }
+
+          } catch (error) {
+            toast.error("Error verifying payment")
+
+          }
+        },
+        model: {
+          ondismiss: async function () {
+            //Handle user closing the popup
+            await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`, {
+              razorpay_order_id: data.order.id,
+              paymentFailed: true
+            }, {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            toast.error("Payment cancelled or failed")
+          }
+        },
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone
+        },
+        theme: { color: "#F47286" }
+      };
+
+      const rzp = new window.Razorpay(options)
+
+
+      //listion for payment failed
+      rzp.on("payment.failed", async function (response) {
+        await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/verify-payment`, {
+          razorpay_order_id: data.order.id,
+          paymentFailed: true
+        }, {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        })
+        toast.error("Payment Failed. please try again")
+      })
+
+      rzp.open()
+
+
     } catch (error) {
+      console.log(error);
+
+      toast.error("somethong went wrong while processing payment")
 
     }
   }
@@ -135,12 +212,13 @@ const AddressForm = () => {
                       <p>{addr.phone}</p>
                       <p>{addr.email}</p>
                       <p>{addr.address}, {addr.city}, {addr.state}, {addr.zip}, {addr.country}</p>
-                      <button onClick={(e) => dispatch(deletedAddress(index))} className='absolute top-2 right-2 text-red-500 hovera:text-red-700 text-sm'>Delete</button>
+                      <button onClick={(e) => dispatch(deletedAddress(index))} className='absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm'>Delete</button>
                     </div>
                   })
                 }
-                <Button className='w-full' varient='outline' onClick={() => setShowForm(true)}>+ Add New Address</Button>
-                <Button disabled={selectedAddress === null} className='w-full bg-orange-600'>Proceed To Checkout</Button>
+                <Button className='w-full' variant='outline' onClick={() => setShowForm(true)}>+ Add New Address</Button>
+                <Button disabled={selectedAddress === null}
+                  onClick={handlePayment} className='w-full bg-orange-600'>Proceed To Checkout</Button>
 
               </div>
             )

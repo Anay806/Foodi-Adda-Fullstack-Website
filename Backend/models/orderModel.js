@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   shiping: { type: Number, required: true },
   tax: { type: Number, required: true },
-  amount: { type: String, default: "INR" },
+  currency: { type: String, default: "INR" },
   status: { type: String, enum: ["Pending", "Paid", "Failed"], default: "Pending" },
 
 
