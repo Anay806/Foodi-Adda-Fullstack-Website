@@ -21,6 +21,7 @@ import avatar from "../assets/avatar.png"
 import { toast } from 'sonner'
 import axios from 'axios'
 import { setUser } from '@/redux/userSlice'
+import MyOrder from './MyOrder'
 
 
 const Profile = () => {
@@ -203,36 +204,10 @@ const Profile = () => {
 
         </TabsContent>
         <TabsContent value="orders">
+          <MyOrder />
 
         </TabsContent>
-        <TabsContent value="reports">
-          <Card>
-            <CardHeader>
-              <CardTitle>Reports</CardTitle>
-              <CardDescription>
-                Generate and download your detailed reports. Export data in
-                multiple formats for analysis.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              You have 5 reports ready and available to export.
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-              <CardDescription>
-                Manage your account preferences and options. Customize your
-                experience to fit your needs.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              Configure notifications, security, and themes.
-            </CardContent>
-          </Card>
-        </TabsContent>
+
       </Tabs>
 
     </div>
