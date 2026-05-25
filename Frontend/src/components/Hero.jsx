@@ -52,7 +52,7 @@ const Hero = () => {
       modules={[Navigation, Pagination, Autoplay]}
       spaceBetween={20}
       slidesPerView={1}
-      navigation
+      // navigation
       pagination={{ clickable: true }}
       autoplay={{ delay: 3000, disableOnInteraction: false }}
       loop={true}
@@ -61,7 +61,7 @@ const Hero = () => {
       {
         allProducts && allProducts.length > 0 ? (
           allProducts.map((item, index) => (
-            <SwiperSlide key={index} className='h-full flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900'>
+            <SwiperSlide key={index} className='h-full flex items-center justify-center bg-gradient-to-r from-[#1a2a6c] via-[#b21f1f] via-[#fdbb2d] to-[#00c9ff]'>
               <div className="w-full px-4 md:px-8 py-8 md:py-0">
                 <div className="flex flex-col md:flex-row gap-8 md:gap-12 justify-between items-center h-[600px] md:h-screen">
                   {/* Text Content */}
@@ -95,7 +95,7 @@ const Hero = () => {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center md:justify-start">
                       <Button
-                        onClick={() => navigate(`/product/${item._id}`)}
+                        onClick={() => navigate(`/products/${item._id}`)}
                         className="bg-gradient-to-r from-orange-500 to-red-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all duration-300 transform hover:scale-105"
                       >
                         Shop Now
@@ -114,7 +114,7 @@ const Hero = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur-3xl opacity-20 -z-10"></div>
                       <img
                         className="w-80 md:w-96 h-80 md:h-96 rounded-full object-cover hover:scale-105 transition-transform duration-500 shadow-2xl shadow-orange-500/20 border-4 border-orange-400/30 cursor-pointer"
-                        onClick={() => navigate(`/product/${item._id}`)}
+                        onClick={() => navigate(`/products/${item._id}`)}
                         src={item.productImg[0]?.url}
                         alt={item.productName}
                       />
